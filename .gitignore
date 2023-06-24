@@ -1,0 +1,6 @@
+.vscode
+
+src/*.o
+
+test/b64_test
+test/*.o
