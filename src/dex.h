@@ -296,7 +296,7 @@ struct DexMapItem
 struct DexMapList
 {
     u4 size;            /* #of entries in list */
-    DexMapItem list[1]; /* entries */
+    struct DexMapItem list[1]; /* entries */
 };
 
 /*
@@ -360,6 +360,15 @@ struct DexClassDef
     u4 staticValuesOff; /* file offset to DexEncodedArray */
 };
 
+struct ClassDataItem
+{
+    uint32_t static_fields_size;
+    uint32_t instance_fields_size;
+    uint32_t direct_methods_size;
+    uint32_t virtual_methods_size;
+};
+
+
 /*
  * Direct-mapped "call_site_id_item"
  */
@@ -409,7 +418,7 @@ struct DexTypeItem
 struct DexTypeList
 {
     u4 size;             /* #of entries in list */
-    DexTypeItem list[1]; /* entries */
+    struct DexTypeItem list[1]; /* entries */
 };
 
 /*
@@ -507,7 +516,7 @@ struct DexAnnotationSetRefItem
 struct DexAnnotationSetRefList
 {
     u4 size;
-    DexAnnotationSetRefItem list[1];
+    struct DexAnnotationSetRefItem list[1];
 };
 
 /*
@@ -586,6 +595,17 @@ struct DexOptHeader
     /* pad for 64-bit alignment if necessary */
 };
 
+struct EncodeField {
+    uint32_t field_idx_diff;
+    uint32_t access_flags;
+};
+
+struct EncodeMethod {
+    uint32_t method_idx;
+    uint32_t access_flags;
+    uint32_t code_off;
+};
+
 #define DEX_OPT_FLAG_BIG (1 << 1) /* swapped to big-endian */
 
 #define DEX_INTERFACE_CACHE_SIZE 128 /* must be power of 2 */
@@ -599,23 +619,23 @@ struct DexOptHeader
 struct DexFile
 {
     /* directly-mapped "opt" header */
-    const DexOptHeader *pOptHeader;
+    struct DexOptHeader *pOptHeader;
 
     /* pointers to directly-mapped structs and arrays in base DEX */
-    const DexHeader *pHeader;
-    const DexStringId *pStringIds;
-    const DexTypeId *pTypeIds;
-    const DexFieldId *pFieldIds;
-    const DexMethodId *pMethodIds;
-    const DexProtoId *pProtoIds;
-    const DexClassDef *pClassDefs;
-    const DexLink *pLinkData;
+    struct DexHeader *pHeader;
+    struct DexStringId *pStringIds;
+    struct DexTypeId *pTypeIds;
+    struct DexFieldId *pFieldIds;
+    struct DexMethodId *pMethodIds;
+    struct DexProtoId *pProtoIds;
+    struct DexClassDef *pClassDefs;
+    struct DexLink *pLinkData;
 
     /*
      * These are mapped out of the "auxillary" section, and may not be
      * included in the file.
      */
-    const DexClassLookup *pClassLookup;
+    struct DexClassLookup *pClassLookup;
     const void *pRegisterMapPool; // RegisterMapClassPool
 
     /* points to start of DEX file data */
@@ -635,5 +655,65 @@ enum
     kDexParseVerifyChecksum = 1,
     kDexParseContinueOnError = (1 << 1),
 };
+
+/// @brief 通过method_id 获取在指定dex文件中的偏移, 并获取method长度
+/// @param dex_mem 指定dex文件头的内存
+/// @param method_id 指定的method_id
+/// @param method_size 指定method的长度
+/// @return 指定的DexCode item 结构体
+struct DexCode* get_method_off(struct DexHeader* dex_mem, uint32_t method_id, uint32_t* method_size);
+
+/// @brief 通过 string_idx 寻找字符串
+/// @param dex_mem 指定dex文件头的内存
+/// @param string_idx 指定的string索引
+/// @param strlen 带回查找到的字符串长度
+/// @return 返回找到的字符串
+char* get_string(struct DexHeader* dex_mem, uint32_t string_idx, uint32_t* str_len);
+
+/// @brief 找到指定的type
+/// @param dex_mem 指定dex文件头的内存
+/// @param type_idx 指定的type索引
+/// @return DexTypeId 类型, 找到的type
+struct DexTypeId* get_type(struct DexHeader* dex_mem, uint32_t type_idx);
+
+/// @brief 根据 class 所在的偏移, 获取class信息
+/// @param dex_mem 指定dex文件头的内存
+/// @param class_data_off 指定的class偏移
+/// @param class_data_out 带回 读取完信息之后的class内容地址
+/// @return 返回 ClassDataItem 信息
+struct ClassDataItem* get_class_item(struct DexHeader* dex_mem, uint32_t class_data_off, uint8_t **class_data_out);
+
+/// @brief 根据指定的code偏移, 获取code内容
+/// @param dex_mem 指定dex文件头的内存
+/// @param code_off 指定的code偏移
+/// @param code_out 带回 真正code内容
+/// @return DexCode 基础内容
+struct DexCode* get_code_item(struct DexHeader* dex_mem, uint32_t code_off, uint8_t** code_out);
+
+/// @brief 从指定的fields起始位置, 读取EncodeField
+/// @param fields_start 指定的fields起始位置
+/// @param old_diff 上一次 diff idx, 并带回
+/// @return EncodeField
+struct EncodeField* get_field_x(uint8_t** fields_start, uint32_t* old_diff);
+
+/// @brief 从指定的method起始位置, 读取EncodeMethod
+/// @param methods_start 指定的method起始位置
+/// @param old_diff 上一次 diff idx, 并带回
+/// @return EncodeMethod
+struct EncodeMethod* get_method_x(uint8_t** methods_start, uint32_t* old_diff);
+
+/// @brief 在指定的class中寻找指定索引的method
+/// @param dex_mem 指定dex文件头的内存
+/// @param class_data_item 指定的class
+/// @param method_idx 指定的method索引
+/// @param class_data class内容地址
+/// @return 如果找到返回对应method的 DexCode 结构, 如果没找到返回NULL
+struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDataItem* class_data_item, uint32_t method_idx, uint8_t **class_data);
+
+/// @brief 在指定的dex中根据指定的索引寻找指定的method
+/// @param dex_mem 指定dex文件头的内存
+/// @param method_idx 指定的method索引
+/// @return 如果找到返回对应method的 DexCode 结构, 如果没找到返回NULL
+struct DexCode* find_method(struct DexHeader* dex_mem, uint32_t method_idx);
 
 #endif // LIBDEX_DEXFILE_H_
