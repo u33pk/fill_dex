@@ -117,21 +117,21 @@ struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDa
         if(method->method_idx == method_idx){
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
-            printf("method idx: %d, flag: 0x%x, code: 0x%lx\n", method->method_idx, method->access_flags, method->code_off);
+            printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
             hex_dump(code_out, 0x60);
             return code_item;
         }
         free(method);
     }
     old_diff = 0;
-    for (uint32_t i = 0; i < class_data_item->static_fields_size; i++)
+    for (uint32_t i = 0; i < class_data_item->virtual_methods_size; i++)
     {
         struct EncodeMethod* method = get_method_x(class_data, &old_diff);
         if(method->method_idx == method_idx){
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
-            printf("method idx: %d, flag: 0x%x, code: 0x%lx\n", method->method_idx, method->access_flags, method->code_off);
-            hex_dump(code_out, 0x20);
+            printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
+            hex_dump(code_out, 0x60);
             return code_item;
         }
         free(method);
@@ -143,6 +143,8 @@ struct DexCode* find_method(struct DexHeader* dex_mem, uint32_t method_idx) {
     for (uint32_t i = 0; i < dex_mem->classDefsSize; i++)
     {
         struct DexClassDef* class_def = (struct DexClassDef*)((uint64_t)dex_mem + dex_mem->classDefsOff) + i;
+        if(class_def->classDataOff == 0) 
+            continue;
         uint8_t *class_data_out;
         struct ClassDataItem* class_data_item = get_class_item(dex_mem, class_def->classDataOff, &class_data_out);
         struct DexCode * dex_code = find_method_from_class(dex_mem, class_data_item, method_idx, &class_data_out);

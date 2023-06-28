@@ -1,5 +1,10 @@
 all:
-	echo "1"
+	gcc -g -c src/main.c -I./src -o src/main.o
+	gcc -g -c src/base64.c -I./src -o src/base64.o
+	gcc -g -c src/dex.c -I./src -o src/dex.o
+	gcc -g -c src/leb128.c -I./src -o src/leb128.o
+	gcc -g -c src/fill.c -I./src -o src/fill.o
+	gcc -g src/*.o -o dex
 
 test_b64:
 	gcc -c test/b64_test.c -I./src -o test/b64_test.o
