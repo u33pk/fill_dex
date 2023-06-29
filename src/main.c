@@ -7,9 +7,14 @@
 #include "fill.h"
 
 int main(int argc, char* args[], char* envp[]) {
-    
-    int dex_fd = open("/home/aosp/Project/dex2fill/classes3.dex", O_RDWR);
-    FILE* item_file = fopen("/home/aosp/Project/dex2fill/item_12794744.item", "r");
+    if(argc != 3){
+        printf("%s <dex_path> <item_path>\n", args[0]);
+        return 0;
+    }
+    char* dex_path = args[1];
+    char* item_path = args[2];
+    int dex_fd = open(dex_path, O_RDWR);
+    FILE* item_file = fopen(item_path, "r");
     struct stat dex_stat;
     fstat(dex_fd, &dex_stat);
     struct DexHeader* dex_head = (struct DexHeader*)mmap(NULL, dex_stat.st_size , PROT_READ|PROT_WRITE, MAP_SHARED , dex_fd , 0);
