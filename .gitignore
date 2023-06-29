@@ -2,8 +2,8 @@
 
 src/*.o
 
-test/b64_test
-test/*.o
+test
 
 *.item
 *.dex
+.gdb_history
