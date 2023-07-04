@@ -1,7 +1,7 @@
 .vscode
 
 src/*.o
-
+dex
 test
 
 *.item

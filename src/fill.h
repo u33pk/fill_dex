@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+
+char* method_count_b64;
+char* method_count;
 
 /// @brief 向目标地址填充opcode
 /// @param dest dex_mem中的目标code地址
