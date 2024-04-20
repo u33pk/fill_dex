@@ -118,8 +118,10 @@ struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDa
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
             printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
-            // hex_dump(code_out, 0x60);
-            return code_item;
+            if(method->code_off > 0){
+                // hex_dump(code_out, 0x60);
+                return code_item;
+            }
         }
         free(method);
     }
@@ -131,8 +133,10 @@ struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDa
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
             printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
-            // hex_dump(code_out, 0x60);
-            return code_item;
+            if(method->code_off > 0){
+                // hex_dump(code_out, 0x60);
+                return code_item;
+            }
         }
         free(method);
     }
@@ -149,8 +153,8 @@ struct DexCode* find_method(struct DexHeader* dex_mem, uint32_t method_idx) {
         struct ClassDataItem* class_data_item = get_class_item(dex_mem, class_def->classDataOff, &class_data_out);
         struct DexCode* dex_code = find_method_from_class(dex_mem, class_data_item, method_idx, &class_data_out);
         if(dex_code != NULL){
-            if(dex_code->insns[0] == 0)
-                return dex_code;
+            // if(dex_code->insns[0] == 0)
+            return dex_code;
         }
 
     }

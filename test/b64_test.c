@@ -27,17 +27,19 @@ test(unsigned char *encode, unsigned int encodelen,
 	free(encode_out);
 	free(decode_out);
 }
-
-int
-main(void)
+char* b64_data = "BQACAAQAAADfCVEAKwAAABoAEcxxIBz2AwAaAFWhcSAb9gQAbhAl1gQACgQ4BBkAcBBcYAMAIgTUAHEAKQQAAAwAcCAPBAQAIgDuE3AgkmEwABYBlgBuQBoEBCEoBHAQQGADAA4A";
+int main(void)
 {
-	test((void *)"", 0, "", 0);
-	test((void *)"f", 1, "Zg==", 4);
-	test((void *)"fo", 2, "Zm8=", 4);
-	test((void *)"foo", 3, "Zm9v", 4);
-	test((void *)"foob", 4, "Zm9vYg==", 8);
-	test((void *)"fooba", 5, "Zm9vYmE=", 8);
-	test((void *)"foobar", 6, "Zm9vYmFy", 8);
-
+	// test((void *)"", 0, "", 0);
+	// test((void *)"f", 1, "Zg==", 4);
+	// test((void *)"fo", 2, "Zm8=", 4);
+	// test((void *)"foo", 3, "Zm9v", 4);
+	// test((void *)"foob", 4, "Zm9vYg==", 8);
+	// test((void *)"fooba", 5, "Zm9vYmE=", 8);
+	// test((void *)"foobar", 6, "Zm9vYmFy", 8);
+	char* out = (char*)malloc(4096);
+	int len = base64_decode(b64_data, 136, out);
+	printf("len: %d\n", len);
+	hex_dump(out, len);
 	return 0;
 }

@@ -1,7 +1,7 @@
 #include "fill.h"
 
 void fill_code(struct DexCode* dest, uint8_t* src, int src_len){
-    memcpy((void*)dest, (void*)src, src_len - 0x10);
+    memcpy((void*)dest, (void*)src, src_len);
 }
 
 void fill_from_file(struct DexHeader* dex_mem, FILE* item_file) {

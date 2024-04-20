@@ -7,6 +7,9 @@
 ```bash
 make
 ./dex path/classes.dex path/item_size.item
+
+#或者
+python3 util/qc.py  # 该工具内的路径和文件名自行修改
 ```
 ## 使用的库
 
@@ -18,3 +21,4 @@ make
 | 日期 | 摘要|
 |-------|-------|
 | 23.6.30 | 完成u33pk脱壳item文件回填的基础功能 |
+| 24.4.20 | 修复回填的0偏移和存在nop的错误, 增加了一个item去重的工具 |
