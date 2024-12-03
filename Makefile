@@ -23,8 +23,6 @@ test_b64:
 test_dex:
 	gcc -g test/dex_test.c src/dex.c src/leb128.c src/base64.c -I./src/ -o test/dex
 
-run:
-	./dex-debug -off test.dex test.item
 
 clean:
 	rm -rf src/*.o

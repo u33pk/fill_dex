@@ -9,3 +9,4 @@ test
 *.dex
 .gdb_history
 *.bak
+*.txt

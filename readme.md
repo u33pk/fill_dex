@@ -5,7 +5,12 @@
 ## 用法
 
 ```bash
-make
+make            # normal version
+make debug      # debug version
+python3 fillDex.py unpack_dir
+```
+
+```text
 ./dex -h
 usage: ./dex [arguments]
         -m or --fill_mod    index/offset
@@ -13,6 +18,8 @@ usage: ./dex [arguments]
         -d or --dex_path    dex path
         -i or --item_path   item path
         -h or --help
+
+python3 fillDex.py <unpack_dir>
 ```
 ## 使用的库
 
