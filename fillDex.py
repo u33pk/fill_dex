@@ -44,4 +44,7 @@ def fill_dex():
         exec_cmd(f"./dex -m offset -p on -d u33pk/dex_{_i}.dex -i u33pk/item_{_i}.item")
 
 if __name__ == "__main__":
-    fill_dex(sys.argv[1])
+    if(len(sys.argv) != 2):
+        print(sys.argv[0], "u33pk dir")
+    else:
+        fill_dex(sys.argv[1])
