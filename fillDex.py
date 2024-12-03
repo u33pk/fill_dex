@@ -15,9 +15,9 @@ def exec_cmd(cmd):
     exit_code = subp.wait()
     return exit_code
 
-def target(dump_dir):
+def target(u33_dir):
     item_list = []
-    for f in os.listdir(dump_dir):
+    for f in os.listdir(u33_dir):
         if(f.endswith(".item")):
             item = re.search(r'item_(\d+)\.item', f)
             item_list.append(item.group(1))
@@ -26,6 +26,7 @@ def target(dump_dir):
 
 def deduplication(item_path):
     new_lines = []
+    print("deduplication", item_path)
     with open(item_path, "r") as item_fd:
         while(True):
             line = item_fd.readline()
@@ -38,8 +39,8 @@ def deduplication(item_path):
         for line in new_lines:
             item_fd.write(line)
 
-def fill_dex():
-    item_list = target()
+def fill_dex(u33_dir):
+    item_list = target(u33_dir)
     for _i in item_list:
         exec_cmd(f"./dex -m offset -p on -d u33pk/dex_{_i}.dex -i u33pk/item_{_i}.item")
 
