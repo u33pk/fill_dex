@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
+#include "log.h"
 
 /*
  * These match the definitions in the VM specification.

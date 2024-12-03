@@ -6,10 +6,13 @@
 
 ```bash
 make
-./dex path/classes.dex path/item_size.item
-
-#或者
-python3 util/qc.py  # 该工具内的路径和文件名自行修改
+./dex -h
+usage: ./dex [arguments]
+        -m or --fill_mod    index/offset
+        -p or --pad_switch  on/off
+        -d or --dex_path    dex path
+        -i or --item_path   item path
+        -h or --help
 ```
 ## 使用的库
 
@@ -22,3 +25,4 @@ python3 util/qc.py  # 该工具内的路径和文件名自行修改
 |-------|-------|
 | 23.6.30 | 完成u33pk脱壳item文件回填的基础功能 |
 | 24.4.20 | 修复回填的0偏移和存在nop的错误, 增加了一个item去重的工具 |
+| 24.7.31 | 增加offset模式修复 |

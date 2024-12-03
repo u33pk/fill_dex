@@ -5,6 +5,7 @@
 #define BASE64_DECODE_OUT_SIZE(s) ((unsigned int)(((s) / 4) * 3))
 
 #include<stdio.h>
+#include "log.h"
 
 /// @brief 对指定内容进行base64编码
 /// @param in 要编码的内容

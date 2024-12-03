@@ -193,7 +193,7 @@ void hex_dump(const char *buf, int len)
         str_hex_buffer[16 * 3] = 0x00;
         str_print_able[j] = 0x00;
 
-        printf("%04x  %s %s\n", i, str_hex_buffer, str_print_able);
+        DEBUG("%04x  %s %s\n", i, str_hex_buffer, str_print_able);
     }
 
     // 处理剩下的不够16字节长度的部分
@@ -230,5 +230,5 @@ void hex_dump(const char *buf, int len)
         str_hex_buffer[z++] = ' ';
     }
     str_hex_buffer[16 * 3] = 0x00;
-    printf("%04x  %s %s\n", pos, str_hex_buffer, str_print_able);
+    DEBUG("%04x  %s %s\n", pos, str_hex_buffer, str_print_able);
 }

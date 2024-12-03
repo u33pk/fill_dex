@@ -2,6 +2,7 @@
 
 src/*.o
 dex
+dex-debug
 test
 
 *.item

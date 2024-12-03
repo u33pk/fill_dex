@@ -17,7 +17,7 @@ struct DexCode* get_method_off(struct DexHeader* dex_mem, uint32_t method_id, ui
 
     uint8_t *class_data_out;
     struct ClassDataItem* class_data_item = get_class_item(dex_mem, class_def->classDataOff, &class_data_out);
-    // printf("%d %d\n", class_data_item->direct_methods_size, class_data_item->virtual_methods_size);
+    // DEBUG("%d %d\n", class_data_item->direct_methods_size, class_data_item->virtual_methods_size);
 
     // uint8_t* method_idx_diff_start = (uint8_t*)((uint64_t)class_data_out + class_data_item->static_fields_size + class_data_item->instance_fields_size);
     
@@ -37,7 +37,7 @@ char* get_string(struct DexHeader* dex_mem, uint32_t string_idx, uint32_t* str_l
             *str_len = data_len;
         }
         memcpy(data_str, data, data_len);
-        // printf("strlen: %d, data: %s\n", data_len, data_str);
+        // DEBUG("strlen: %d, data: %s\n", data_len, data_str);
         return data_str;
     } else {
         return NULL;
@@ -73,7 +73,7 @@ struct DexCode* get_code_item(struct DexHeader* dex_mem, uint32_t code_off, uint
     if(code_out != NULL){
         *code_out = &code_item->insns;
     }
-    // printf("reg: %d, in: %d, out: %d, insns: 0x%x\n", code_item->registersSize, code_item->insSize, code_item->outsSize, code_item->insnsSize);
+    // DEBUG("reg: %d, in: %d, out: %d, insns: 0x%x\n", code_item->registersSize, code_item->insSize, code_item->outsSize, code_item->insnsSize);
     return code_item;
 }
 
@@ -82,7 +82,7 @@ struct EncodeField* get_field_x(uint8_t** fields_start, uint32_t* old_diff){
     field->field_idx_diff = DecodeUnsignedLeb128(fields_start) + *old_diff;
     field->access_flags =DecodeUnsignedLeb128(fields_start);
     *old_diff = field->field_idx_diff;
-    // printf("field idx diff: %d, flag: 0x%x\n", field->field_idx_diff, field->access_flags);
+    // DEBUG("field idx diff: %d, flag: 0x%x\n", field->field_idx_diff, field->access_flags);
     return field;
 }
 
@@ -92,7 +92,7 @@ struct EncodeMethod* get_method_x(uint8_t** methods_start, uint32_t* old_diff){
     method->access_flags = DecodeUnsignedLeb128(methods_start);
     method->code_off = DecodeUnsignedLeb128(methods_start);
     *old_diff = method->method_idx;
-    // printf("method idx: %d, flag: 0x%x, code: 0x%lx\n", method->method_idx, method->access_flags, method->code_off);
+    // DEBUG("method idx: %d, flag: 0x%x, code: 0x%lx\n", method->method_idx, method->access_flags, method->code_off);
     return method;
 }
 
@@ -117,7 +117,7 @@ struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDa
         if(method->method_idx == method_idx){
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
-            printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
+            DEBUG("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
             if(method->code_off > 0){
                 // hex_dump(code_out, 0x60);
                 return code_item;
@@ -132,7 +132,7 @@ struct DexCode* find_method_from_class(struct DexHeader* dex_mem, struct ClassDa
         if(method->method_idx == method_idx){
             uint8_t* code_out;
             struct DexCode * code_item = get_code_item(dex_mem, method->code_off, &code_out);
-            printf("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
+            DEBUG("method idx: %d, flag: 0x%x, code: 0x%x\n", method->method_idx, method->access_flags, method->code_off);
             if(method->code_off > 0){
                 // hex_dump(code_out, 0x60);
                 return code_item;
