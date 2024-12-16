@@ -3,6 +3,15 @@ import subprocess
 import re
 import sys
 import shutil
+import zipfile
+
+def compress_folder(folder_path, zip_path):
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, folder_path)
+                zipf.write(file_path, arcname=arcname)
 
 def exec_cmd(cmd):
     print(cmd)
@@ -42,14 +51,19 @@ def deduplication(item_path):
 
 def fill_dex(u33_dir):
     item_list = target(u33_dir)
+    idx = 1
     for _i in item_list:
         deduplication(f"{u33_dir}/item_{_i}.item")
-        shutil.copy2(f"{u33_dir}/dex_{_i}.dex", f"out/dex_{_i}.dex")
-        exec_cmd(f"./dex -m offset -p on -d out/dex_{_i}.dex -i {u33_dir}/item_{_i}.item")
+        out_dex = "out/classes{_idx}.dex".format(_idx = str(idx) if idx != 1 else "")
+        shutil.copy2(f"{u33_dir}/dex_{_i}.dex", out_dex)
+        exec_cmd(f"./dex -m offset -p on -d {out_dex} -i {u33_dir}/item_{_i}.item")
+        idx += 1
 
 if __name__ == "__main__":
     
     if(len(sys.argv) != 2):
-        print(sys.argv[0], "u33pk dir")
+        print(sys.argv[0], "u33pk_dir")
     else:
-        fill_dex(sys.argv[1])
+        u33pk_dir = sys.argv[1]
+        fill_dex(u33pk_dir)
+        compress_folder("out", '{_dir}/out.zip'.format(_dir = u33pk_dir))
